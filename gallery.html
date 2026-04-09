@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Photography Portfolio</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/navbar.css">
+    <link rel="stylesheet" href="assets/css/gallery.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>Photography Portfolio</h1>
+            </div>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="admin/index.html" class="admin-link">Admin</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+        <div class="container">
+            <h1>Photo Gallery</h1>
+            
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="portrait">Portraits</button>
+                <button class="filter-btn" data-filter="wedding">Weddings</button>
+                <button class="filter-btn" data-filter="landscape">Landscapes</button>
+                <button class="filter-btn" data-filter="events">Events</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-grid">
+                <!-- Portrait Images -->
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3581.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3582.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3593.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3594.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3595.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3601.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3607.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3610.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+
+                <!-- Wedding Images -->
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1386.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1401.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1402.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1406.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1413.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1424.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1438.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1447.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+
+                <!-- Landscape Images -->
+                <div class="gallery-item" data-category="landscape">
+                    <img src="assets/images/landscape/pexels-allen-boguslavsky-1344061-19329957.jpg" alt="Landscape">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="landscape">
+                    <img src="assets/images/landscape/pexels-axp-photography-500641970-16534748.jpg" alt="Landscape">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="landscape">
+                    <img src="assets/images/landscape/pexels-jeswin-3037096.jpg" alt="Landscape">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="landscape">
+                    <img src="assets/images/landscape/pexels-joshkjack-135018.jpg" alt="Landscape">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="landscape">
+                    <img src="assets/images/landscape/pexels-shashank3240-5438965.jpg" alt="Landscape">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="landscape">
+                    <img src="assets/images/landscape/pexels-virgovoice-33024243.jpg" alt="Landscape">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+
+                <!-- More Portrait Images -->
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3614.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3620.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3635.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="portrait">
+                    <img src="assets/images/portrait/DSC_3640.JPG" alt="Portrait">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+
+                <!-- More Wedding Images -->
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1453.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1466.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1473.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="wedding">
+                    <img src="assets/images/wedding/DSC_1483.JPG" alt="Wedding">
+                    <div class="gallery-overlay">
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <span class="close">&times;</span>
+        <img class="lightbox-image" src="" alt="">
+        <div class="lightbox-controls">
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Photography Portfolio. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">Instagram</a>
+                <a href="#" class="social-icon">Facebook</a>
+                <a href="#" class="social-icon">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/navbar.js"></script>
+    <script src="assets/js/gallery.js"></script>
+</body>
+</html>

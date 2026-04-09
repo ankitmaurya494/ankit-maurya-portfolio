@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Photography Portfolio</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="menu-item active" data-tab="dashboard">Dashboard</a></li>
+                <li><a href="#photos" class="menu-item" data-tab="photos">Manage Photos</a></li>
+                <li><a href="#messages" class="menu-item" data-tab="messages">Messages</a></li>
+                <li><a href="#portfolio" class="menu-item" data-tab="portfolio">Portfolio</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="back-link">← Back to Website</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Login Section -->
+            <div id="loginSection" class="login-section">
+                <div class="login-card">
+                    <h1>Admin Login</h1>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="password">Enter Password</label>
+                            <input type="password" id="password" name="password" required>
+                            <small>Default: admin123</small>
+                        </div>
+                        <button type="submit" class="login-button">Login</button>
+                        <div id="loginError" class="error-message"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <h1>Dashboard</h1>
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <h3>Total Photos</h3>
+                            <p class="stat-number" id="totalPhotos">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Messages</h3>
+                            <p class="stat-number" id="totalMessages">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Projects</h3>
+                            <p class="stat-number" id="totalProjects">0</p>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <h2>Recent Messages</h2>
+                        <div id="recentMessages" class="messages-list"></div>
+                    </div>
+                </div>
+
+                <!-- Photos Tab -->
+                <div id="photos" class="tab-content">
+                    <h1>Manage Photos</h1>
+                    
+                    <div class="upload-section">
+                        <h2>Upload New Photo</h2>
+                        <form id="uploadForm" class="upload-form">
+                            <div class="form-group">
+                                <label for="photoTitle">Photo Title</label>
+                                <input type="text" id="photoTitle" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="photoCategory">Category</label>
+                                <select id="photoCategory" name="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="portrait">Portraits</option>
+                                    <option value="wedding">Weddings</option>
+                                    <option value="landscape">Landscapes</option>
+                                    <option value="events">Events</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="photoFile">Photo File</label>
+                                <input type="file" id="photoFile" name="file" accept="image/*" required>
+                                <small>Note: File will be stored as Base64</small>
+                            </div>
+                            <button type="submit" class="upload-button">Upload Photo</button>
+                            <div id="uploadMessage" class="message"></div>
+                        </form>
+                    </div>
+
+                    <div class="photos-list-section">
+                        <h2>Uploaded Photos</h2>
+                        <div id="photosList" class="photos-list"></div>
+                    </div>
+                </div>
+
+                <!-- Messages Tab -->
+                <div id="messages" class="tab-content">
+                    <h1>Messages</h1>
+                    <div id="messagesList" class="messages-list"></div>
+                </div>
+
+                <!-- Portfolio Tab -->
+                <div id="portfolio" class="tab-content">
+                    <h1>Manage Portfolio</h1>
+                    
+                    <div class="portfolio-section">
+                        <h2>Add Project</h2>
+                        <form id="projectForm" class="project-form">
+                            <div class="form-group">
+                                <label for="projectName">Project Name</label>
+                                <input type="text" id="projectName" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectCategory">Category</label>
+                                <select id="projectCategory" name="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="Portraits">Portraits</option>
+                                    <option value="Weddings">Weddings</option>
+                                    <option value="Landscapes">Landscapes</option>
+                                    <option value="Events">Events</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectDescription">Description</label>
+                                <textarea id="projectDescription" name="description" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectDate">Date</label>
+                                <input type="text" id="projectDate" name="date" placeholder="YYYY" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectLocation">Location</label>
+                                <input type="text" id="projectLocation" name="location" required>
+                            </div>
+                            <button type="submit" class="submit-button">Add Project</button>
+                            <div id="projectMessage" class="message"></div>
+                        </form>
+                    </div>
+
+                    <div class="projects-list-section">
+                        <h2>Projects</h2>
+                        <div id="projectsList" class="projects-list"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/admin.js"></script>
+</body>
+</html>
