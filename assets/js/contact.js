@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Remove preventDefault to allow form submission to Formspree
+            // e.preventDefault();
 
             // Clear previous error messages
             document.querySelectorAll('.form-group').forEach(group => {
@@ -50,38 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
 
-            if (isValid) {
-                // Save message to localStorage
-                const message = {
-                    name: nameInput.value.trim(),
-                    email: emailInput.value.trim(),
-                    phone: document.getElementById('phone').value.trim(),
-                    subject: subjectInput.value,
-                    message: messageInput.value.trim(),
-                    timestamp: new Date().toISOString()
-                };
-
-                let messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
-                messages.push(message);
-                localStorage.setItem('contactMessages', JSON.stringify(messages));
-
-                // Show success message
-                formMessage.textContent = 'Your message has been sent successfully!';
-                formMessage.classList.add('success');
-                formMessage.classList.remove('error');
-
-                // Reset form
-                contactForm.reset();
-
-                // Hide success message after 5 seconds
-                setTimeout(() => {
-                    formMessage.textContent = '';
-                    formMessage.classList.remove('success');
-                }, 5000);
-            } else {
+            if (!isValid) {
+                e.preventDefault(); // Prevent submission if invalid
                 formMessage.textContent = 'Please fix the errors above';
                 formMessage.classList.add('error');
                 formMessage.classList.remove('success');
+            } else {
+                // Form is valid, allow submission to Formspree
+                // Optionally show a submitting message
+                formMessage.textContent = 'Sending message...';
+                formMessage.classList.remove('error');
+                formMessage.classList.add('success');
             }
         });
 
