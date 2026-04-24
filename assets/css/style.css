@@ -115,14 +115,36 @@ a:hover {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    position: relative;
     color: var(--white);
     text-align: center;
-    padding: 150px 20px;
     min-height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
 }
 
 .hero-content h2 {
@@ -175,6 +197,10 @@ section {
     width: 100%;
     height: 250px;
     object-fit: cover;
+}
+
+.featured-card.portrait-card img {
+    object-position: top;
 }
 
 .featured-card h3 {
@@ -230,6 +256,79 @@ section {
 .social-icon {
     color: var(--white);
     transition: color 0.3s ease;
+}
+
+/* Responsive Base */
+@media (max-width: 1024px) {
+    .container,
+    .navbar-container {
+        padding: 0 15px;
+    }
+
+    .hero {
+        min-height: 420px;
+    }
+
+    .hero-content h2 {
+        font-size: 2.4rem;
+    }
+
+    .hero-content p {
+        font-size: 1.15rem;
+    }
+
+    .featured-grid {
+        gap: 20px;
+    }
+
+    .featured-card img {
+        height: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 360px;
+    }
+
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-card img {
+        height: 220px;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    .footer .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h2 {
+        font-size: 1.7rem;
+    }
+
+    .hero-content p {
+        font-size: 0.95rem;
+    }
 }
 
 .social-icon:hover {

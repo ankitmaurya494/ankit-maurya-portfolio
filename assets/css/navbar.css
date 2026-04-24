@@ -17,10 +17,39 @@
     height: 70px;
 }
 
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .navbar-brand h1 {
     font-size: 1.5rem;
     color: var(--primary-color);
     margin: 0;
+}
+
+.navbar-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+    animation: logoPop 0.8s ease-out;
+}
+
+@keyframes logoPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .navbar-menu {
