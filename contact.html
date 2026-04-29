@@ -43,13 +43,19 @@
                         <h3>Email</h3>
                         <p><a href="mailto:ankitm2272@gmail.com">ankitm2272@gmail.com</a></p>
                     </div>
-                    <div class="info-card">
+                    <!-- <div class="info-card">
                         <h3>Phone</h3>
                         <p><a href="tel:6387975836">6387975836</a></p>
-                    </div>
+                    </div> -->
                     <div class="info-card">
                         <h3>Location</h3>
                         <p>Suriyawan bypass front of Siyaram marriage hall Bhadohi Uttar Pradesh</p>
+                    </div>
+                    <div class="info-card map-card">
+                        <h3>Find Us</h3>
+                        <div class="map-frame">
+                            <iframe src="https://www.google.com/maps/embed?pb=!3m2!1sen!2sin!4v1777280155310!5m2!1sen!2sin!6m8!1m7!1sUW9qqTrIfnSr-JthsFpe-w!2m2!1d25.45988254601177!2d82.41587468507842!3f90.63847316975267!4f2.529769215321494!5f0.7820865974627469" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
                     </div>
                 </div>
 
@@ -91,9 +97,55 @@
                     </div>
 
                     <button type="submit" class="submit-button">Send Message</button>
-                    <div class="form-message" id="formMessage"></div>
+                    <div class="form-message" id="contactMessage"></div>
                 </form>
             </div>
+        </div>
+    </section>
+
+    <!-- Review Section -->
+    <section class="review-block">
+        <div class="container">
+            <h2>Share Your Review</h2>
+            <p class="intro-text">If you've worked with me, your feedback helps future clients find the right photographer and lets me keep improving.</p>
+            <form class="contact-form review-form" id="reviewForm" action="https://formspree.io/f/xykbanob" method="POST">
+                <input type="hidden" name="_subject" value="New Client Review">
+                <input type="hidden" name="formType" value="review">
+
+                <div class="form-group">
+                    <label for="reviewName">Name *</label>
+                    <input type="text" id="reviewName" name="name" required>
+                    <span class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewEmail">Email *</label>
+                    <input type="email" id="reviewEmail" name="email" required>
+                    <span class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Rating *</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">Select a rating</option>
+                        <option value="5">★★★★★ Excellent</option>
+                        <option value="4">★★★★ Very Good</option>
+                        <option value="3">★★★ Good</option>
+                        <option value="2">★★ Fair</option>
+                        <option value="1">★ Needs Improvement</option>
+                    </select>
+                    <span class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewMessageField">Your Review *</label>
+                    <textarea id="reviewMessageField" name="message" rows="5" required></textarea>
+                    <span class="error-message"></span>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Review</button>
+                <div class="form-message" id="reviewMessage"></div>
+            </form>
         </div>
     </section>
 

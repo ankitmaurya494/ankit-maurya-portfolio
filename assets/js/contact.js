@@ -1,72 +1,43 @@
-// Contact Form Validation
+// Contact and Review Form Validation
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
+    const reviewForm = document.getElementById('reviewForm');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            // Remove preventDefault to allow form submission to Formspree
-            // e.preventDefault();
+        setupForm(contactForm, 'contact');
+    }
 
-            // Clear previous error messages
-            document.querySelectorAll('.form-group').forEach(group => {
-                group.classList.remove('error');
-            });
+    if (reviewForm) {
+        setupForm(reviewForm, 'review');
+    }
 
-            // Validate form
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const subjectInput = document.getElementById('subject');
-            const messageInput = document.getElementById('message');
-            const formMessage = document.getElementById('formMessage');
+    function setupForm(form, type) {
+        const formMessage = document.getElementById(type === 'review' ? 'reviewMessage' : 'contactMessage');
 
-            let isValid = true;
-
-            // Validate name
-            if (!nameInput.value.trim()) {
-                showError(nameInput, 'Name is required');
-                isValid = false;
-            }
-
-            // Validate email
-            if (!emailInput.value.trim()) {
-                showError(emailInput, 'Email is required');
-                isValid = false;
-            } else if (!isValidEmail(emailInput.value)) {
-                showError(emailInput, 'Please enter a valid email');
-                isValid = false;
-            }
-
-            // Validate subject
-            if (!subjectInput.value.trim()) {
-                showError(subjectInput, 'Please select a subject');
-                isValid = false;
-            }
-
-            // Validate message
-            if (!messageInput.value.trim()) {
-                showError(messageInput, 'Message is required');
-                isValid = false;
-            } else if (messageInput.value.trim().length < 10) {
-                showError(messageInput, 'Message must be at least 10 characters');
-                isValid = false;
-            }
+        form.addEventListener('submit', function(e) {
+            clearErrors(form);
+            const isValid = validateForm(form, type);
 
             if (!isValid) {
-                e.preventDefault(); // Prevent submission if invalid
-                formMessage.textContent = 'Please fix the errors above';
+                e.preventDefault();
+                formMessage.textContent = 'Please fix the errors above.';
                 formMessage.classList.add('error');
                 formMessage.classList.remove('success');
-            } else {
-                // Form is valid, allow submission to Formspree
-                // Optionally show a submitting message
-                formMessage.textContent = 'Sending message...';
-                formMessage.classList.remove('error');
-                formMessage.classList.add('success');
+                return;
             }
+
+            if (type === 'contact') {
+                updateBookingCount();
+            } else {
+                updateReviewCount();
+            }
+
+            formMessage.textContent = 'Sending your response...';
+            formMessage.classList.remove('error');
+            formMessage.classList.add('success');
         });
 
-        // Real-time validation
-        const inputs = contactForm.querySelectorAll('input, select, textarea');
+        const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             input.addEventListener('blur', function() {
                 validateField(this);
@@ -80,6 +51,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function clearErrors(form) {
+        form.querySelectorAll('.form-group').forEach(group => {
+            group.classList.remove('error');
+        });
+    }
+
+    function validateForm(form, type) {
+        let isValid = true;
+
+        const fields = form.querySelectorAll('input, select, textarea');
+        fields.forEach(field => {
+            if (!validateField(field)) {
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
+
     function showError(field, message) {
         const formGroup = field.parentElement;
         formGroup.classList.add('error');
@@ -90,38 +80,72 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validateField(field) {
-        const formGroup = field.parentElement;
+        const value = field.value.trim();
+        const id = field.id;
 
-        if (field.id === 'name') {
-            if (!field.value.trim()) {
+        if (id === 'name' || id === 'reviewName') {
+            if (!value) {
                 showError(field, 'Name is required');
                 return false;
             }
-        } else if (field.id === 'email') {
-            if (!field.value.trim()) {
+        }
+
+        if (id === 'email' || id === 'reviewEmail') {
+            if (!value) {
                 showError(field, 'Email is required');
                 return false;
-            } else if (!isValidEmail(field.value)) {
+            } else if (!isValidEmail(value)) {
                 showError(field, 'Please enter a valid email');
                 return false;
             }
-        } else if (field.id === 'subject') {
-            if (!field.value.trim()) {
+        }
+
+        if (id === 'subject') {
+            if (!value) {
                 showError(field, 'Please select a subject');
                 return false;
             }
-        } else if (field.id === 'message') {
-            if (!field.value.trim()) {
+        }
+
+        if (id === 'message') {
+            if (!value) {
                 showError(field, 'Message is required');
                 return false;
-            } else if (field.value.trim().length < 10) {
+            } else if (value.length < 10) {
                 showError(field, 'Message must be at least 10 characters');
                 return false;
             }
         }
 
-        formGroup.classList.remove('error');
+        if (id === 'rating') {
+            if (!value) {
+                showError(field, 'Please select a rating');
+                return false;
+            }
+        }
+
+        if (id === 'reviewMessageField') {
+            if (!value) {
+                showError(field, 'Review is required');
+                return false;
+            } else if (value.length < 10) {
+                showError(field, 'Review must be at least 10 characters');
+                return false;
+            }
+        }
+
+        field.parentElement.classList.remove('error');
         return true;
+    }
+
+    function updateBookingCount() {
+        const currentCount = parseInt(localStorage.getItem('bookingCount') || '0', 10);
+        localStorage.setItem('bookingCount', currentCount + 1);
+    }
+
+    function updateReviewCount() {
+        const currentCount = parseInt(localStorage.getItem('reviewCount') || '18', 10);
+        localStorage.setItem('reviewCount', currentCount + 1);
     }
 
     function isValidEmail(email) {
