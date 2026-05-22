@@ -2,81 +2,222 @@
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     const reviewForm = document.getElementById('reviewForm');
+    const reviewList = document.getElementById('reviewList');
+    const reviewFormBanner = document.getElementById('reviewFormBanner');
+    const contactMessage = document.getElementById('contactMessage');
+    const reviewMessage = document.getElementById('reviewMessage');
 
-    if (contactForm) {
-        setupForm(contactForm, 'contact');
+    const currentUser = getCurrentUser();
+
+    initializePage();
+
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem('photographyCurrentUser') || 'null');
     }
 
-    if (reviewForm) {
-        setupForm(reviewForm, 'review');
+    function initializePage() {
+        renderReviews();
+        updateFormVisibility();
+
+        if (contactForm) {
+            setupContactForm();
+        }
+
+        if (reviewForm) {
+            setupReviewForm();
+        }
     }
 
-    function setupForm(form, type) {
-        const formMessage = document.getElementById(type === 'review' ? 'reviewMessage' : 'contactMessage');
+    function updateFormVisibility() {
+        const contactSubmit = contactForm ? contactForm.querySelector('button[type="submit"]') : null;
+        const reviewSubmit = reviewForm ? reviewForm.querySelector('button[type="submit"]') : null;
 
-        form.addEventListener('submit', function(e) {
-            clearErrors(form);
-            const isValid = validateForm(form, type);
+        if (!currentUser) {
+            if (reviewFormBanner) {
+                reviewFormBanner.classList.remove('hidden');
+                reviewFormBanner.innerHTML = `You must <a href="login.html">log in</a> or register before submitting a review.`;
+            }
+            if (contactForm) {
+                contactForm.classList.add('blocked-form');
+            }
+            if (reviewForm) {
+                reviewForm.classList.add('blocked-form');
+            }
+            if (contactSubmit) {
+                contactSubmit.disabled = true;
+            }
+            if (reviewSubmit) {
+                reviewSubmit.disabled = true;
+            }
+            return;
+        }
 
-            if (!isValid) {
-                e.preventDefault();
-                formMessage.textContent = 'Please fix the errors above.';
-                formMessage.classList.add('error');
-                formMessage.classList.remove('success');
+        if (reviewFormBanner) {
+            reviewFormBanner.classList.add('hidden');
+            reviewFormBanner.innerHTML = '';
+        }
+
+        if (contactForm) {
+            contactForm.classList.remove('blocked-form');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            if (nameInput) {
+                nameInput.value = currentUser.name || '';
+            }
+            if (emailInput) {
+                emailInput.value = currentUser.email;
+                emailInput.readOnly = true;
+            }
+        }
+
+        if (reviewForm) {
+            reviewForm.classList.remove('blocked-form');
+            const reviewName = document.getElementById('reviewName');
+            if (reviewName) {
+                reviewName.value = currentUser.name || '';
+            }
+        }
+
+        if (reviewFormBanner) {
+            reviewFormBanner.classList.add('hidden');
+            reviewFormBanner.innerHTML = '';
+        }
+        if (contactSubmit) {
+            contactSubmit.disabled = false;
+        }
+        if (reviewSubmit) {
+            reviewSubmit.disabled = false;
+        }
+    }
+
+    function setupContactForm() {
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearErrors(contactForm);
+
+            if (!currentUser) {
+                showFormMessage(contactMessage, 'Please log in or register first to send a message.', 'error');
                 return;
             }
 
-            if (type === 'contact') {
-                updateBookingCount();
-            } else {
-                updateReviewCount();
+            if (!validateForm(contactForm, 'contact')) {
+                showFormMessage(contactMessage, 'Please fix the errors above.', 'error');
+                return;
             }
 
-            formMessage.textContent = 'Sending your response...';
-            formMessage.classList.remove('error');
-            formMessage.classList.add('success');
-        });
+            const messageData = {
+                id: Date.now(),
+                name: document.getElementById('name').value.trim(),
+                email: currentUser.email,
+                phone: document.getElementById('phone').value.trim(),
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value.trim(),
+                userEmail: currentUser.email,
+                timestamp: new Date().toISOString()
+            };
 
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                validateField(this);
-            });
-
-            input.addEventListener('input', function() {
-                if (this.parentElement.classList.contains('error')) {
-                    validateField(this);
-                }
-            });
+            saveContactMessage(messageData);
+            showFormMessage(contactMessage, 'Your message has been saved locally and is visible to admin in the dashboard.', 'success');
+            contactForm.reset();
+            updateFormVisibility();
         });
+    }
+
+    function setupReviewForm() {
+        reviewForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearErrors(reviewForm);
+
+            if (!currentUser) {
+                showFormMessage(reviewMessage, 'Please log in or register first to leave a review.', 'error');
+                return;
+            }
+
+            if (!validateForm(reviewForm, 'review')) {
+                showFormMessage(reviewMessage, 'Please fix the errors above.', 'error');
+                return;
+            }
+
+            const reviewData = {
+                id: Date.now(),
+                name: document.getElementById('reviewName').value.trim(),
+                rating: document.getElementById('rating').value,
+                message: document.getElementById('reviewMessageField').value.trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            saveReview(reviewData);
+            showFormMessage(reviewMessage, 'Thank you! Your review is now visible on the website.', 'success');
+            reviewForm.reset();
+            updateFormVisibility();
+            renderReviews();
+        });
+    }
+
+    function saveContactMessage(message) {
+        const messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+        messages.unshift(message);
+        localStorage.setItem('contactMessages', JSON.stringify(messages));
+    }
+
+    function saveReview(review) {
+        const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+        reviews.unshift(review);
+        localStorage.setItem('reviews', JSON.stringify(reviews));
+    }
+
+    function renderReviews() {
+        if (!reviewList) {
+            return;
+        }
+
+        const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+        reviewList.innerHTML = '';
+
+        if (reviews.length === 0) {
+            reviewList.innerHTML = '<p>No reviews yet. Be the first to leave feedback!</p>';
+            return;
+        }
+
+        reviews.forEach(review => {
+            const reviewCard = document.createElement('div');
+            reviewCard.className = 'review-card';
+            reviewCard.innerHTML = `
+                <div class="review-card-header">
+                    <h4>${escapeHtml(review.name)}</h4>
+                    <span class="review-rating">${renderStars(review.rating)}</span>
+                </div>
+                <p>${escapeHtml(review.message)}</p>
+                <div class="review-meta">Posted on ${new Date(review.timestamp).toLocaleDateString()}</div>
+            `;
+            reviewList.appendChild(reviewCard);
+        });
+    }
+
+    function renderStars(rating) {
+        const maxRating = 5;
+        let stars = '';
+        for (let i = 1; i <= maxRating; i += 1) {
+            stars += i <= rating ? '★' : '☆';
+        }
+        return stars;
+    }
+
+    function validateForm(form, type) {
+        let isValid = true;
+        const fields = form.querySelectorAll('input, select, textarea');
+        fields.forEach(field => {
+            if (!validateField(field, type)) {
+                isValid = false;
+            }
+        });
+        return isValid;
     }
 
     function clearErrors(form) {
         form.querySelectorAll('.form-group').forEach(group => {
             group.classList.remove('error');
         });
-    }
-
-    function validateForm(form, type) {
-        let isValid = true;
-
-        const fields = form.querySelectorAll('input, select, textarea');
-        fields.forEach(field => {
-            if (!validateField(field)) {
-                isValid = false;
-            }
-        });
-
-        return isValid;
-    }
-
-    function showError(field, message) {
-        const formGroup = field.parentElement;
-        formGroup.classList.add('error');
-        const errorMsg = formGroup.querySelector('.error-message');
-        if (errorMsg) {
-            errorMsg.textContent = message;
-        }
     }
 
     function validateField(field) {
@@ -90,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        if (id === 'email' || id === 'reviewEmail') {
+        if (id === 'email') {
             if (!value) {
                 showError(field, 'Email is required');
                 return false;
@@ -138,18 +279,39 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
-    function updateBookingCount() {
-        const currentCount = parseInt(localStorage.getItem('bookingCount') || '0', 10);
-        localStorage.setItem('bookingCount', currentCount + 1);
+    function showError(field, message) {
+        const formGroup = field.parentElement;
+        formGroup.classList.add('error');
+        const errorMsg = formGroup.querySelector('.error-message');
+        if (errorMsg) {
+            errorMsg.textContent = message;
+        }
     }
 
-    function updateReviewCount() {
-        const currentCount = parseInt(localStorage.getItem('reviewCount') || '18', 10);
-        localStorage.setItem('reviewCount', currentCount + 1);
+    function showFormMessage(element, message, type = 'success') {
+        if (!element) {
+            return;
+        }
+        element.textContent = message;
+        element.classList.remove('error', 'success');
+        element.classList.add(type);
+        element.style.display = 'block';
     }
 
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }
+
+    function escapeHtml(text) {
+        return String(text).replace(/["&'<>]/g, function(match) {
+            return {
+                '"': '&quot;',
+                '&': '&amp;',
+                "'": '&#39;',
+                '<': '&lt;',
+                '>': '&gt;'
+            }[match];
+        });
     }
 });

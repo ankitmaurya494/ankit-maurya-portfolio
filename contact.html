@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact Ankit Maurya for portrait, wedding, landscape, and event photography services in Uttar Pradesh.">
+    <meta name="keywords" content="contact photographer, photography inquiry, book photography, portrait photography booking, wedding photography booking, Ankit Maurya">
+    <meta name="author" content="Ankit Maurya">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Contact - Photography Portfolio">
+    <meta property="og:description" content="Contact Ankit Maurya for portrait, wedding, landscape, and event photography services in Uttar Pradesh.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/images/logo/logo.jpg">
     <title>Contact - Photography Portfolio</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/navbar.css">
@@ -21,6 +29,7 @@
                 <li><a href="gallery.html">Gallery</a></li>
                 <li><a href="portfolio.html">Portfolio</a></li>
                 <li><a href="contact.html" class="active">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -61,7 +70,7 @@
                 </div>
 
                 <!-- Contact Form -->
-                <form class="contact-form" id="contactForm" action="https://formspree.io/f/xykbanob" method="POST">
+                <form class="contact-form" id="contactForm">
                     <div class="form-group">
                         <label for="name">Name *</label>
                         <input type="text" id="name" name="name" required>
@@ -109,19 +118,13 @@
         <div class="container">
             <h2>Share Your Review</h2>
             <p class="intro-text">If you've worked with me, your feedback helps future clients find the right photographer and lets me keep improving.</p>
-            <form class="contact-form review-form" id="reviewForm" action="https://formspree.io/f/xykbanob" method="POST">
-                <input type="hidden" name="_subject" value="New Client Review">
+            <form class="contact-form review-form" id="reviewForm">
                 <input type="hidden" name="formType" value="review">
+                <div id="reviewFormBanner" class="form-banner hidden"></div>
 
                 <div class="form-group">
                     <label for="reviewName">Name *</label>
                     <input type="text" id="reviewName" name="name" required>
-                    <span class="error-message"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="reviewEmail">Email *</label>
-                    <input type="email" id="reviewEmail" name="email" required>
                     <span class="error-message"></span>
                 </div>
 
@@ -147,6 +150,10 @@
                 <button type="submit" class="submit-button">Submit Review</button>
                 <div class="form-message" id="reviewMessage"></div>
             </form>
+            <div class="review-list-section">
+                <h3>Recent Reviews</h3>
+                <div id="reviewList" class="review-list"></div>
+            </div>
         </div>
     </section>
     </main>

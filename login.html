@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Client and admin login for Ankit Maurya photography services.">
+    <meta name="keywords" content="login, client login, admin login, photography login, Ankit Maurya">
+    <meta name="author" content="Ankit Maurya">
+    <title>Login - Photography Portfolio</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/navbar.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img src="assets/images/logo/logo.jpg" alt="Brand Logo" class="navbar-logo">
+                <h1>Ankit Maurya</h1>
+            </div>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="active">Login</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <section class="login-section">
+            <div class="container login-container">
+                <div class="login-heading">
+                    <h1>Login or Register</h1>
+                    <p>Clients need an account to send messages and submit reviews. Admin access is separate for website management.</p>
+                </div>
+
+                <div class="auth-grid">
+                    <div class="auth-card">
+                        <div class="auth-card-header">
+                            <h2>Client Access</h2>
+                        </div>
+                        <div class="auth-tabs">
+                            <button type="button" class="tab-button active" data-target="clientLoginForm">Login</button>
+                            <button type="button" class="tab-button" data-target="clientRegisterForm">Register</button>
+                        </div>
+                        <div id="clientStatus" class="auth-status"></div>
+
+                        <form id="clientLoginForm" class="auth-form">
+                            <div class="form-group">
+                                <label for="loginEmail">Email</label>
+                                <input type="email" id="loginEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Password</label>
+                                <input type="password" id="loginPassword" name="password" required>
+                            </div>
+                            <button type="submit" class="submit-button">Login</button>
+                        </form>
+
+                        <form id="clientRegisterForm" class="auth-form" style="display: none;">
+                            <div class="form-group">
+                                <label for="registerName">Name</label>
+                                <input type="text" id="registerName" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerEmail">Email</label>
+                                <input type="email" id="registerEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerMobile">Mobile</label>
+                                <input type="tel" id="registerMobile" name="mobile" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPassword">Password</label>
+                                <input type="password" id="registerPassword" name="password" required>
+                            </div>
+                            <button type="submit" class="submit-button">Register</button>
+                        </form>
+
+                        <div id="clientMessage" class="auth-message"></div>
+                    </div>
+
+                    <div class="auth-card admin-card">
+                        <div class="auth-card-header">
+                            <h2>Admin Access</h2>
+                        </div>
+                        <p class="admin-intro">Log in here to manage the gallery, review messages, and update the website using the admin dashboard.</p>
+                        <form id="adminLoginForm" class="auth-form">
+                            <div class="form-group">
+                                <label for="adminPassword">Admin Password</label>
+                                <input type="password" id="adminPassword" name="password" required>
+                            </div>
+                            <button type="submit" class="submit-button">Admin Login</button>
+                        </form>
+                        <div id="adminMessage" class="auth-message"></div>
+                        <div class="admin-note">
+                            <p>The admin login is separate from client accounts. Use it to upload and delete gallery photos directly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Photography Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/navbar.js"></script>
+    <script src="assets/js/login.js"></script>
+</body>
+</html>

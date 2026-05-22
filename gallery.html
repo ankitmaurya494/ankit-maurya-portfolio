@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore the gallery of portraits, weddings, landscapes, and event photography by Ankit Maurya. Discover curated images from recent sessions.">
+    <meta name="keywords" content="photography gallery, portraits, weddings, landscapes, event photography, Ankit Maurya, Bhadohi photographer">
+    <meta name="author" content="Ankit Maurya">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Gallery - Photography Portfolio">
+    <meta property="og:description" content="Explore the gallery of portraits, weddings, landscapes, and event photography by Ankit Maurya.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/images/logo/logo.jpg">
     <title>Gallery - Photography Portfolio</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/navbar.css">
@@ -21,6 +29,7 @@
                 <li><a href="gallery.html" class="active">Gallery</a></li>
                 <li><a href="portfolio.html">Portfolio</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -29,6 +38,20 @@
             </div>
         </div>
     </nav>
+
+    <!-- Game-Type Loader -->
+    <div id="gameLoader" class="game-loader">
+        <div class="loader-container">
+            <canvas id="gameCanvas" width="300" height="300"></canvas>
+            <div class="loader-text">
+                <p class="loading-title">🎮 Loading Gallery 🎮</p>
+                <p class="loading-subtitle">Catch the pixels while you wait!</p>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Gallery Section -->
     <section class="gallery-section">
@@ -42,6 +65,34 @@
                 <button class="filter-btn" data-filter="wedding">Weddings</button>
                 <button class="filter-btn" data-filter="landscape">Landscapes</button>
                 <button class="filter-btn" data-filter="events">Events</button>
+            </div>
+
+            <div id="adminToolbar" class="admin-toolbar" style="display:none;">
+                <button id="adminToggleButton" class="secondary-button">Admin Gallery Tools</button>
+                <div id="adminGalleryPanel" class="admin-gallery-panel" style="display: none;">
+                    <form id="adminUploadForm" class="admin-upload-form">
+                        <div class="form-group">
+                            <label for="adminPhotoTitle">Photo Title</label>
+                            <input type="text" id="adminPhotoTitle" name="title" placeholder="Enter title">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPhotoCategory">Category</label>
+                            <select id="adminPhotoCategory" name="category">
+                                <option value="">Select a category</option>
+                                <option value="portrait">Portraits</option>
+                                <option value="wedding">Weddings</option>
+                                <option value="landscape">Landscapes</option>
+                                <option value="events">Events</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPhotoFile">Photo File</label>
+                            <input type="file" id="adminPhotoFile" accept="image/*">
+                        </div>
+                        <button type="submit" class="submit-button">Upload Photo</button>
+                    </form>
+                    <div id="adminGalleryMessage" class="admin-message"></div>
+                </div>
             </div>
 
             <!-- Gallery Grid -->
