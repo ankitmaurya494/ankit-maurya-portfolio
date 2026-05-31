@@ -3,21 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     const reviewForm = document.getElementById('reviewForm');
     const reviewList = document.getElementById('reviewList');
-    const reviewFormBanner = document.getElementById('reviewFormBanner');
     const contactMessage = document.getElementById('contactMessage');
     const reviewMessage = document.getElementById('reviewMessage');
 
-    const currentUser = getCurrentUser();
-
     initializePage();
-
-    function getCurrentUser() {
-        return JSON.parse(localStorage.getItem('photographyCurrentUser') || 'null');
-    }
 
     function initializePage() {
         renderReviews();
-        updateFormVisibility();
 
         if (contactForm) {
             setupContactForm();
@@ -28,77 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function updateFormVisibility() {
-        const contactSubmit = contactForm ? contactForm.querySelector('button[type="submit"]') : null;
-        const reviewSubmit = reviewForm ? reviewForm.querySelector('button[type="submit"]') : null;
-
-        if (!currentUser) {
-            if (reviewFormBanner) {
-                reviewFormBanner.classList.remove('hidden');
-                reviewFormBanner.innerHTML = `You must <a href="login.html">log in</a> or register before submitting a review.`;
-            }
-            if (contactForm) {
-                contactForm.classList.add('blocked-form');
-            }
-            if (reviewForm) {
-                reviewForm.classList.add('blocked-form');
-            }
-            if (contactSubmit) {
-                contactSubmit.disabled = true;
-            }
-            if (reviewSubmit) {
-                reviewSubmit.disabled = true;
-            }
-            return;
-        }
-
-        if (reviewFormBanner) {
-            reviewFormBanner.classList.add('hidden');
-            reviewFormBanner.innerHTML = '';
-        }
-
-        if (contactForm) {
-            contactForm.classList.remove('blocked-form');
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            if (nameInput) {
-                nameInput.value = currentUser.name || '';
-            }
-            if (emailInput) {
-                emailInput.value = currentUser.email;
-                emailInput.readOnly = true;
-            }
-        }
-
-        if (reviewForm) {
-            reviewForm.classList.remove('blocked-form');
-            const reviewName = document.getElementById('reviewName');
-            if (reviewName) {
-                reviewName.value = currentUser.name || '';
-            }
-        }
-
-        if (reviewFormBanner) {
-            reviewFormBanner.classList.add('hidden');
-            reviewFormBanner.innerHTML = '';
-        }
-        if (contactSubmit) {
-            contactSubmit.disabled = false;
-        }
-        if (reviewSubmit) {
-            reviewSubmit.disabled = false;
-        }
-    }
-
     function setupContactForm() {
+        const contactSubmitButton = contactForm.querySelector('.submit-button');
+
         contactForm.addEventListener('submit', function(event) {
             event.preventDefault();
             clearErrors(contactForm);
-
-            if (!currentUser) {
-                showFormMessage(contactMessage, 'Please log in or register first to send a message.', 'error');
-                return;
-            }
 
             if (!validateForm(contactForm, 'contact')) {
                 showFormMessage(contactMessage, 'Please fix the errors above.', 'error');
@@ -108,18 +35,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const messageData = {
                 id: Date.now(),
                 name: document.getElementById('name').value.trim(),
-                email: currentUser.email,
+                email: document.getElementById('email').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 subject: document.getElementById('subject').value,
                 message: document.getElementById('message').value.trim(),
-                userEmail: currentUser.email,
                 timestamp: new Date().toISOString()
             };
 
-            saveContactMessage(messageData);
-            showFormMessage(contactMessage, 'Your message has been saved locally and is visible to admin in the dashboard.', 'success');
-            contactForm.reset();
-            updateFormVisibility();
+            setSubmitLoading(contactSubmitButton, true);
+            showFormMessage(contactMessage, 'Sending your booking request...', 'success');
+
+            setTimeout(() => {
+                saveContactMessage(messageData);
+                showFormMessage(contactMessage, 'Your message has been saved locally and is visible to admin in the dashboard.', 'success');
+                setSubmitLoading(contactSubmitButton, false);
+                contactForm.reset();
+            }, 900);
         });
     }
 
@@ -127,11 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         reviewForm.addEventListener('submit', function(event) {
             event.preventDefault();
             clearErrors(reviewForm);
-
-            if (!currentUser) {
-                showFormMessage(reviewMessage, 'Please log in or register first to leave a review.', 'error');
-                return;
-            }
 
             if (!validateForm(reviewForm, 'review')) {
                 showFormMessage(reviewMessage, 'Please fix the errors above.', 'error');
@@ -149,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
             saveReview(reviewData);
             showFormMessage(reviewMessage, 'Thank you! Your review is now visible on the website.', 'success');
             reviewForm.reset();
-            updateFormVisibility();
             renderReviews();
         });
     }
@@ -296,6 +221,23 @@ document.addEventListener('DOMContentLoaded', function() {
         element.classList.remove('error', 'success');
         element.classList.add(type);
         element.style.display = 'block';
+    }
+
+    function setSubmitLoading(button, isLoading) {
+        if (!button) {
+            return;
+        }
+        button.dataset.originalText = button.dataset.originalText || button.textContent;
+
+        if (isLoading) {
+            button.classList.add('loading');
+            button.disabled = true;
+            button.textContent = 'Sending...';
+        } else {
+            button.classList.remove('loading');
+            button.disabled = false;
+            button.textContent = button.dataset.originalText;
+        }
     }
 
     function isValidEmail(email) {

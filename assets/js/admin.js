@@ -5,28 +5,209 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminPanel = document.getElementById('adminPanel');
     const logoutBtn = document.getElementById('logoutBtn');
     const loginError = document.getElementById('loginError');
+    const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+    const resetSection = document.getElementById('resetSection');
+    const sendOtpButton = document.getElementById('sendOtpButton');
+    const otpMessage = document.getElementById('otpMessage');
+    const otpGroup = document.getElementById('otpGroup');
+    const newPasswordGroup = document.getElementById('newPasswordGroup');
+    const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+    const resetPasswordButton = document.getElementById('resetPasswordButton');
+    const cancelResetButton = document.getElementById('cancelResetButton');
 
+    const adminInfoForm = document.getElementById('adminInfoForm');
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    const adminInfoMessage = document.getElementById('adminInfoMessage');
+    const changePasswordMessage = document.getElementById('changePasswordMessage');
+
+    const ADMIN_DATA_KEY = 'photographyAdminData';
     const DEFAULT_PASSWORD = 'admin123';
+    let currentOtp = null;
 
-    // Check if user is already logged in
-    if (sessionStorage.getItem('adminLoggedIn')) {
-        showAdminPanel();
+    async function initAdminData() {
+        let stored = localStorage.getItem(ADMIN_DATA_KEY);
+        if (!stored) {
+            const hash = await hashPassword(DEFAULT_PASSWORD);
+            const data = {
+                passwordHash: hash,
+                email: '',
+                mobile: ''
+            };
+            localStorage.setItem(ADMIN_DATA_KEY, JSON.stringify(data));
+        }
     }
+
+    async function getAdminData() {
+        await initAdminData();
+        return JSON.parse(localStorage.getItem(ADMIN_DATA_KEY));
+    }
+
+    function saveAdminData(data) {
+        localStorage.setItem(ADMIN_DATA_KEY, JSON.stringify(data));
+    }
+
+    async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    function showResetSection() {
+        if (resetSection) {
+            resetSection.classList.remove('hidden');
+        }
+    }
+
+    function hideResetSection() {
+        if (resetSection) {
+            resetSection.classList.add('hidden');
+        }
+        if (otpMessage) {
+            otpMessage.textContent = '';
+            otpMessage.classList.remove('success', 'error');
+        }
+        if (otpGroup) otpGroup.classList.add('hidden');
+        if (newPasswordGroup) newPasswordGroup.classList.add('hidden');
+        if (confirmPasswordGroup) confirmPasswordGroup.classList.add('hidden');
+        if (resetPasswordButton) resetPasswordButton.classList.add('hidden');
+        if (cancelResetButton) cancelResetButton.classList.add('hidden');
+        currentOtp = null;
+    }
+
+    function showMessage(element, message, type = 'success') {
+        if (!element) return;
+        element.textContent = message;
+        element.classList.remove('error', 'success');
+        element.classList.add(type);
+        element.style.display = 'block';
+    }
+
+    function clearMessage(element) {
+        if (!element) return;
+        element.textContent = '';
+        element.classList.remove('error', 'success');
+        element.style.display = 'none';
+    }
+
+    function generateOtp() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    async function populateSettings() {
+        const adminData = await getAdminData();
+        if (adminInfoForm) {
+            const emailInput = document.getElementById('adminEmail');
+            const mobileInput = document.getElementById('adminMobile');
+            if (emailInput) emailInput.value = adminData.email || '';
+            if (mobileInput) mobileInput.value = adminData.mobile || '';
+        }
+    }
+
+    async function initializePage() {
+        await initAdminData();
+        if (sessionStorage.getItem('adminLoggedIn')) {
+            showAdminPanel();
+        }
+    }
+
+    initializePage();
 
     // Login
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const password = document.getElementById('password').value;
+            const adminData = await getAdminData();
+            const passwordHash = await hashPassword(password);
 
-            if (password === DEFAULT_PASSWORD) {
+            if (adminData && passwordHash === adminData.passwordHash) {
                 sessionStorage.setItem('adminLoggedIn', 'true');
                 loginError.textContent = '';
+                hideResetSection();
                 showAdminPanel();
             } else {
                 loginError.textContent = 'Invalid password';
                 loginError.style.color = '#d32f2f';
             }
+        });
+    }
+
+    if (forgotPasswordBtn) {
+        forgotPasswordBtn.addEventListener('click', function() {
+            showResetSection();
+            if (cancelResetButton) cancelResetButton.classList.remove('hidden');
+        });
+    }
+
+    if (sendOtpButton) {
+        sendOtpButton.addEventListener('click', async function() {
+            const email = document.getElementById('resetEmail').value.trim().toLowerCase();
+            const mobile = document.getElementById('resetMobile').value.trim();
+            const adminData = await getAdminData();
+
+            if (!email || !mobile) {
+                showMessage(otpMessage, 'Please enter both admin email and mobile.', 'error');
+                return;
+            }
+
+            if (!adminData.email || !adminData.mobile) {
+                showMessage(otpMessage, 'Please save admin email and mobile in Settings first.', 'error');
+                return;
+            }
+
+            if (email !== adminData.email.toLowerCase() || mobile !== adminData.mobile) {
+                showMessage(otpMessage, 'Email or mobile does not match admin settings.', 'error');
+                return;
+            }
+
+            currentOtp = generateOtp();
+            showMessage(otpMessage, `OTP has been sent to admin email/mobile. Your code is ${currentOtp}`, 'success');
+            if (otpGroup) otpGroup.classList.remove('hidden');
+            if (newPasswordGroup) newPasswordGroup.classList.remove('hidden');
+            if (confirmPasswordGroup) confirmPasswordGroup.classList.remove('hidden');
+            if (resetPasswordButton) resetPasswordButton.classList.remove('hidden');
+            if (cancelResetButton) cancelResetButton.classList.remove('hidden');
+        });
+    }
+
+    if (resetPasswordButton) {
+        resetPasswordButton.addEventListener('click', async function() {
+            const otp = document.getElementById('resetOtp').value.trim();
+            const newPassword = document.getElementById('resetNewPassword').value;
+            const confirmPassword = document.getElementById('resetConfirmPassword').value;
+
+            if (!otp || !newPassword || !confirmPassword) {
+                showMessage(otpMessage, 'Please complete all reset fields.', 'error');
+                return;
+            }
+
+            if (otp !== currentOtp) {
+                showMessage(otpMessage, 'Invalid OTP. Please try again.', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showMessage(otpMessage, 'Passwords do not match.', 'error');
+                return;
+            }
+
+            const adminData = await getAdminData();
+            adminData.passwordHash = await hashPassword(newPassword);
+            saveAdminData(adminData);
+            showMessage(otpMessage, 'Password reset successful. Please log in with your new password.', 'success');
+            if (currentOtp) currentOtp = null;
+            if (loginForm) loginForm.reset();
+            if (resetSection) {
+                resetSection.classList.add('hidden');
+            }
+        });
+    }
+
+    if (cancelResetButton) {
+        cancelResetButton.addEventListener('click', function() {
+            hideResetSection();
         });
     }
 
@@ -48,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadPhotos();
         loadMessages();
         loadProjects();
+        populateSettings();
     }
 
     function showLoginPanel() {
@@ -58,25 +240,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tab Navigation
     function setupAdminTabs() {
         const menuItems = document.querySelectorAll('.menu-item');
+        const panelButtons = document.querySelectorAll('.panel-actions [data-tab]');
         const tabContents = document.querySelectorAll('.tab-content');
+
+        function activateTab(tabName) {
+            menuItems.forEach(m => m.classList.toggle('active', m.dataset.tab === tabName));
+            panelButtons.forEach(btn => btn.classList.toggle('btn-secondary', btn.dataset.tab === tabName));
+            panelButtons.forEach(btn => btn.classList.toggle('btn-ghost', btn.dataset.tab !== tabName));
+            tabContents.forEach(tab => tab.classList.toggle('active', tab.id === tabName));
+        }
 
         menuItems.forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
-                const tabName = this.dataset.tab;
-
-                // Update active menu item
-                menuItems.forEach(m => m.classList.remove('active'));
-                this.classList.add('active');
-
-                // Update active tab
-                tabContents.forEach(tab => tab.classList.remove('active'));
-                const activeTab = document.getElementById(tabName);
-                if (activeTab) {
-                    activeTab.classList.add('active');
-                }
+                activateTab(this.dataset.tab);
             });
         });
+
+        panelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                activateTab(this.dataset.tab);
+            });
+        });
+
+        const initialTab = document.querySelector('.menu-item.active')?.dataset.tab || 'dashboard';
+        activateTab(initialTab);
     }
 
     // Dashboard
@@ -120,46 +308,69 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const title = document.getElementById('photoTitle').value;
+            const titleInput = document.getElementById('photoTitle').value.trim();
             const category = document.getElementById('photoCategory').value;
-            const file = document.getElementById('photoFile').files[0];
+            const files = Array.from(document.getElementById('photoFile').files || []);
             const uploadMessage = document.getElementById('uploadMessage');
 
-            if (!file) {
-                uploadMessage.textContent = 'Please select a file';
+            uploadMessage.classList.remove('success', 'error');
+            uploadMessage.textContent = '';
+
+            if (!files.length) {
+                uploadMessage.textContent = 'Please select at least one file.';
                 uploadMessage.classList.add('error');
-                uploadMessage.classList.remove('success');
                 return;
             }
 
-            // Read file as Base64
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const photo = {
-                    id: Date.now(),
-                    title: title,
-                    category: category,
-                    data: e.target.result,
-                    timestamp: new Date().toISOString()
-                };
+            if (!category) {
+                uploadMessage.textContent = 'Please select a category.';
+                uploadMessage.classList.add('error');
+                return;
+            }
 
-                let photos = JSON.parse(localStorage.getItem('photos')) || [];
-                photos.push(photo);
-                localStorage.setItem('photos', JSON.stringify(photos));
+            const photos = JSON.parse(localStorage.getItem('photos')) || [];
+            const gallery = JSON.parse(localStorage.getItem('galleryImages')) || [];
 
-                uploadMessage.textContent = 'Photo uploaded successfully!';
-                uploadMessage.classList.add('success');
-                uploadMessage.classList.remove('error');
+            const readFile = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve({ file, data: reader.result });
+                reader.onerror = () => reject(new Error('Unable to read file: ' + file.name));
+                reader.readAsDataURL(file);
+            });
 
-                uploadForm.reset();
-                loadPhotos();
+            Promise.all(files.map(readFile))
+                .then(results => {
+                    results.forEach(({ file, data }) => {
+                        const autoTitle = titleInput || file.name.replace(/\.[^/.]+$/, '');
+                        const id = Date.now() + Math.floor(Math.random() * 1000);
+                        const photo = {
+                            id: id,
+                            title: autoTitle,
+                            category: category,
+                            data: data,
+                            timestamp: new Date().toISOString()
+                        };
 
-                setTimeout(() => {
-                    uploadMessage.textContent = '';
-                }, 3000);
-            };
+                        photos.push(photo);
+                        gallery.push({ id: photo.id, title: photo.title, category: photo.category, src: photo.data, alt: photo.title });
+                    });
 
-            reader.readAsDataURL(file);
+                    localStorage.setItem('photos', JSON.stringify(photos));
+                    localStorage.setItem('galleryImages', JSON.stringify(gallery));
+
+                    uploadMessage.textContent = `${files.length} photo(s) uploaded successfully.`;
+                    uploadMessage.classList.add('success');
+                    uploadMessage.classList.remove('error');
+
+                    uploadForm.reset();
+                    loadPhotos();
+                    loadDashboard();
+                })
+                .catch(error => {
+                    uploadMessage.textContent = error.message;
+                    uploadMessage.classList.add('error');
+                    uploadMessage.classList.remove('success');
+                });
         });
     }
 
@@ -178,16 +389,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 photoEl.className = 'photo-item';
                 const date = new Date(photo.timestamp).toLocaleString();
                 photoEl.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <div style="flex: 1;">
+                    <img src="${photo.data}" alt="${escapeHtml(photo.title)}" class="photo-image">
+                    <div class="photo-item-content">
+                        <div>
+                            <p class="gallery-category">${escapeHtml(photo.category)}</p>
                             <h4>${escapeHtml(photo.title)}</h4>
-                            <p><strong>Category:</strong> ${escapeHtml(photo.category)}</p>
-                            <img src="${photo.data}" alt="${escapeHtml(photo.title)}" class="photo-image">
-                            <div class="photo-meta">
-                                <span>${date}</span>
-                            </div>
                         </div>
-                        <button class="delete-btn" onclick="deletePhoto(${photo.id})">Delete</button>
+                        <div class="photo-meta">
+                            <span>${date}</span>
+                            <button class="delete-btn" onclick="deletePhoto(${photo.id})">Delete</button>
+                        </div>
                     </div>
                 `;
                 photosList.appendChild(photoEl);
@@ -275,6 +486,59 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    if (adminInfoForm) {
+        adminInfoForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim().toLowerCase();
+            const mobile = document.getElementById('adminMobile').value.trim();
+
+            if (!email || !mobile) {
+                showMessage(adminInfoMessage, 'Please enter both email and mobile.', 'error');
+                return;
+            }
+
+            const adminData = await getAdminData();
+            adminData.email = email;
+            adminData.mobile = mobile;
+            saveAdminData(adminData);
+
+            showMessage(adminInfoMessage, 'Admin contact information saved successfully.', 'success');
+            setTimeout(() => clearMessage(adminInfoMessage), 3000);
+        });
+    }
+
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentAdminPassword').value;
+            const newPassword = document.getElementById('newAdminPassword').value;
+            const confirmPassword = document.getElementById('confirmAdminPassword').value;
+            const adminData = await getAdminData();
+            const currentHash = await hashPassword(currentPassword);
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showMessage(changePasswordMessage, 'Please complete all password fields.', 'error');
+                return;
+            }
+
+            if (currentHash !== adminData.passwordHash) {
+                showMessage(changePasswordMessage, 'Current password is incorrect.', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showMessage(changePasswordMessage, 'New passwords do not match.', 'error');
+                return;
+            }
+
+            adminData.passwordHash = await hashPassword(newPassword);
+            saveAdminData(adminData);
+            showMessage(changePasswordMessage, 'Admin password updated successfully.', 'success');
+            changePasswordForm.reset();
+            setTimeout(() => clearMessage(changePasswordMessage), 3000);
+        });
+    }
+
     // Load Projects
     function loadProjects() {
         const projectsList = document.getElementById('projectsList');
@@ -318,6 +582,12 @@ document.addEventListener('DOMContentLoaded', function() {
             let photos = JSON.parse(localStorage.getItem('photos')) || [];
             photos = photos.filter(p => p.id !== id);
             localStorage.setItem('photos', JSON.stringify(photos));
+
+            // Also remove from galleryImages if present
+            let gallery = JSON.parse(localStorage.getItem('galleryImages')) || [];
+            gallery = gallery.filter(g => g.id !== id);
+            localStorage.setItem('galleryImages', JSON.stringify(gallery));
+
             loadPhotos();
             loadDashboard();
         }

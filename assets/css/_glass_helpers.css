@@ -1,0 +1,79 @@
+/* Helper sheet for glass-animated elements (used by JS to tag elements)
+   This file intentionally mirrors styles in style.css but kept separate for clarity.
+*/
+
+@keyframes sheenMove {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+.glass-animated {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 12px 34px rgba(6,10,18,0.2);
+  transition: transform 0.36s cubic-bezier(.2,.9,.2,1), box-shadow 0.28s ease;
+  border-radius: 12px;
+}
+
+.glass-animated::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -40%;
+  width: 160%;
+  height: 200%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.01) 100%);
+  transform: translateX(-120%);
+  opacity: 0.6;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  transition: opacity 0.4s ease, transform 0.6s ease;
+}
+
+.glass-animated:hover::before {
+  animation: sheenMove 3.2s linear infinite;
+  opacity: 0.9;
+}
+
+.glass-animated:active {
+  transform: translateY(1px) scale(0.998);
+}
+
+/* Ensure drop spans are visible above background */
+.glass-animated .liquid-drop {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  animation: liquidDrop 0.75s ease-out forwards;
+}
+
+/* Slight variant for larger cards */
+.glass-animated.card-large {
+  border-radius: 16px;
+  box-shadow: 0 26px 64px rgba(2,6,23,0.36);
+}
+
+/* Provide readable text color on dark hero */
+.glass-animated input, .glass-animated textarea, .glass-animated select {
+  color: var(--white);
+}
+
+/* Make sure inputs inside forms are visually distinct */
+.input-liquid-underline.glass-animated::after {
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(255,122,89,0.9), rgba(139,92,246,0.9));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.36s cubic-bezier(.2,.9,.2,1);
+}
+
+.input-liquid-underline.glass-animated:focus-within::after {
+  transform: scaleX(1);
+}

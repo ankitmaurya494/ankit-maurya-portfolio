@@ -194,21 +194,40 @@
     flex-direction: column;
 }
 
-.form-group label {
+..form-group label {
     margin-bottom: 8px;
     font-weight: 600;
     color: var(--primary-color);
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.contact-wrapper .form-group label {
+    color: #1f2937;
+}
+
+.contact-wrapper .form-group input,
+.contact-wrapper .form-group select,
+.contact-wrapper .form-group textarea {
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-family: inherit;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+}
+
+.contact-wrapper .form-group input,
+.contact-wrapper .form-group select,
+.contact-wrapper .form-group textarea {
+    background-color: #f7f8fb;
+    color: #111827;
+    border-color: rgba(15, 23, 42, 0.12);
+}
+
+.contact-wrapper .form-group input:focus,
+.contact-wrapper .form-group select:focus,
+.contact-wrapper .form-group textarea:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
 }
 
 .form-group input:focus,

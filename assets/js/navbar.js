@@ -42,3 +42,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Dynamically load shared interaction script (home.js) when navbar.js is present
+(function loadSharedScript(){
+    try {
+        const scripts = document.getElementsByTagName('script');
+        let navbarScript = null;
+        for (let i=0;i<scripts.length;i++){
+            const s = scripts[i];
+            if (s.src && s.src.indexOf('navbar.js') !== -1) { navbarScript = s; break; }
+        }
+        if (!navbarScript) return;
+        const base = navbarScript.src.replace(/navbar\.js(\?.*)?$/,'');
+        const shared = base + 'home.js';
+        const el = document.createElement('script');
+        el.src = shared;
+        el.defer = true;
+        el.onload = function(){};
+        document.head.appendChild(el);
+    } catch(e){ /* ignore */ }
+})();
