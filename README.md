@@ -9,7 +9,7 @@ A modern, fully-functional photography portfolio website built with vanilla HTML
 ✅ **Lightbox Viewer** - Click to expand and navigate through images  
 ✅ **Portfolio Showcase** - Display your best work with project details  
 ✅ **Contact Form** - Client inquiries with email validation and local storage  
-✅ **Admin Dashboard** - Secure login to manage photos, messages, and projects  
+✅ **Admin Dashboard** - Manage photos, messages, and projects  
 ✅ **Dedicated Category Pages** - Direct links from homepage to Portraits, Weddings, and Landscapes  
 ✅ **Keyboard Navigation** - Arrow keys and Escape support in lightbox  
 ✅ **Mobile Menu** - Hamburger navigation for mobile devices
@@ -74,8 +74,7 @@ my-web/
 - Update gallery items and portfolio sections with your actual images
 
 ### 4. **Admin Dashboard**
-Access the admin panel at `/admin/index.html`
-- **Default Password**: `admin123`
+- Access the admin panel at `/admin/index.html`
 - Upload and manage photos
 - View contact form messages
 - Add/manage portfolio projects
@@ -151,11 +150,11 @@ Edit navigation links in navbar:
 
 ## Local Storage Data
 
-The site uses browser's Local Storage to save:
+- The site uses browser's Local Storage to save:
 - Contact form messages: `contactMessages`
 - Uploaded photos: `photos`
 - Portfolio projects: `projects`
-- Admin login session: `adminLoggedIn`
+    (admin session flag removed)
 
 To clear all data, open browser console and run:
 ```javascript
@@ -207,7 +206,6 @@ This is a static site and can be deployed to:
 ### Admin dashboard won't load?
 - Check if you're accessing `/admin/index.html` correctly
 - Click through from navbar Admin link
-- Clear sessionStorage if having login issues
 
 ### Messages not saving?
 - Check if Local Storage is enabled in browser

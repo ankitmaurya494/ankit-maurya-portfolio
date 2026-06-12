@@ -68,7 +68,7 @@
   bottom: 8px;
   height: 3px;
   border-radius: 3px;
-  background: linear-gradient(90deg, rgba(255,122,89,0.9), rgba(139,92,246,0.9));
+  background: linear-gradient(90deg, rgba(75,184,250,0.9), rgba(139,92,246,0.9));
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.36s cubic-bezier(.2,.9,.2,1);

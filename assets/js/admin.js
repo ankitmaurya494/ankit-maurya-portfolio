@@ -1,19 +1,7 @@
 // Admin Dashboard
 document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('loginForm');
-    const loginSection = document.getElementById('loginSection');
     const adminPanel = document.getElementById('adminPanel');
     const logoutBtn = document.getElementById('logoutBtn');
-    const loginError = document.getElementById('loginError');
-    const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-    const resetSection = document.getElementById('resetSection');
-    const sendOtpButton = document.getElementById('sendOtpButton');
-    const otpMessage = document.getElementById('otpMessage');
-    const otpGroup = document.getElementById('otpGroup');
-    const newPasswordGroup = document.getElementById('newPasswordGroup');
-    const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
-    const resetPasswordButton = document.getElementById('resetPasswordButton');
-    const cancelResetButton = document.getElementById('cancelResetButton');
 
     const adminInfoForm = document.getElementById('adminInfoForm');
     const changePasswordForm = document.getElementById('changePasswordForm');
@@ -21,15 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const changePasswordMessage = document.getElementById('changePasswordMessage');
 
     const ADMIN_DATA_KEY = 'photographyAdminData';
-    const DEFAULT_PASSWORD = 'admin123';
-    let currentOtp = null;
 
     async function initAdminData() {
         let stored = localStorage.getItem(ADMIN_DATA_KEY);
         if (!stored) {
-            const hash = await hashPassword(DEFAULT_PASSWORD);
             const data = {
-                passwordHash: hash,
+                passwordHash: '',
                 email: '',
                 mobile: ''
             };
@@ -54,28 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
-    function showResetSection() {
-        if (resetSection) {
-            resetSection.classList.remove('hidden');
-        }
-    }
-
-    function hideResetSection() {
-        if (resetSection) {
-            resetSection.classList.add('hidden');
-        }
-        if (otpMessage) {
-            otpMessage.textContent = '';
-            otpMessage.classList.remove('success', 'error');
-        }
-        if (otpGroup) otpGroup.classList.add('hidden');
-        if (newPasswordGroup) newPasswordGroup.classList.add('hidden');
-        if (confirmPasswordGroup) confirmPasswordGroup.classList.add('hidden');
-        if (resetPasswordButton) resetPasswordButton.classList.add('hidden');
-        if (cancelResetButton) cancelResetButton.classList.add('hidden');
-        currentOtp = null;
-    }
-
     function showMessage(element, message, type = 'success') {
         if (!element) return;
         element.textContent = message;
@@ -91,10 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
         element.style.display = 'none';
     }
 
-    function generateOtp() {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    }
-
     async function populateSettings() {
         const adminData = await getAdminData();
         if (adminInfoForm) {
@@ -107,123 +66,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function initializePage() {
         await initAdminData();
-        if (sessionStorage.getItem('adminLoggedIn')) {
-            showAdminPanel();
-        }
+        // Show admin panel directly (login removed)
+        if (adminPanel) adminPanel.style.display = 'block';
+        populateSettings();
+        setupAdminTabs();
+        loadDashboard();
+        loadPhotos();
+        loadMessages();
+        loadProjects();
     }
 
     initializePage();
 
-    // Login
-    if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const password = document.getElementById('password').value;
-            const adminData = await getAdminData();
-            const passwordHash = await hashPassword(password);
-
-            if (adminData && passwordHash === adminData.passwordHash) {
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                loginError.textContent = '';
-                hideResetSection();
-                showAdminPanel();
-            } else {
-                loginError.textContent = 'Invalid password';
-                loginError.style.color = '#d32f2f';
-            }
-        });
-    }
-
-    if (forgotPasswordBtn) {
-        forgotPasswordBtn.addEventListener('click', function() {
-            showResetSection();
-            if (cancelResetButton) cancelResetButton.classList.remove('hidden');
-        });
-    }
-
-    if (sendOtpButton) {
-        sendOtpButton.addEventListener('click', async function() {
-            const email = document.getElementById('resetEmail').value.trim().toLowerCase();
-            const mobile = document.getElementById('resetMobile').value.trim();
-            const adminData = await getAdminData();
-
-            if (!email || !mobile) {
-                showMessage(otpMessage, 'Please enter both admin email and mobile.', 'error');
-                return;
-            }
-
-            if (!adminData.email || !adminData.mobile) {
-                showMessage(otpMessage, 'Please save admin email and mobile in Settings first.', 'error');
-                return;
-            }
-
-            if (email !== adminData.email.toLowerCase() || mobile !== adminData.mobile) {
-                showMessage(otpMessage, 'Email or mobile does not match admin settings.', 'error');
-                return;
-            }
-
-            currentOtp = generateOtp();
-            showMessage(otpMessage, `OTP has been sent to admin email/mobile. Your code is ${currentOtp}`, 'success');
-            if (otpGroup) otpGroup.classList.remove('hidden');
-            if (newPasswordGroup) newPasswordGroup.classList.remove('hidden');
-            if (confirmPasswordGroup) confirmPasswordGroup.classList.remove('hidden');
-            if (resetPasswordButton) resetPasswordButton.classList.remove('hidden');
-            if (cancelResetButton) cancelResetButton.classList.remove('hidden');
-        });
-    }
-
-    if (resetPasswordButton) {
-        resetPasswordButton.addEventListener('click', async function() {
-            const otp = document.getElementById('resetOtp').value.trim();
-            const newPassword = document.getElementById('resetNewPassword').value;
-            const confirmPassword = document.getElementById('resetConfirmPassword').value;
-
-            if (!otp || !newPassword || !confirmPassword) {
-                showMessage(otpMessage, 'Please complete all reset fields.', 'error');
-                return;
-            }
-
-            if (otp !== currentOtp) {
-                showMessage(otpMessage, 'Invalid OTP. Please try again.', 'error');
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                showMessage(otpMessage, 'Passwords do not match.', 'error');
-                return;
-            }
-
-            const adminData = await getAdminData();
-            adminData.passwordHash = await hashPassword(newPassword);
-            saveAdminData(adminData);
-            showMessage(otpMessage, 'Password reset successful. Please log in with your new password.', 'success');
-            if (currentOtp) currentOtp = null;
-            if (loginForm) loginForm.reset();
-            if (resetSection) {
-                resetSection.classList.add('hidden');
-            }
-        });
-    }
-
-    if (cancelResetButton) {
-        cancelResetButton.addEventListener('click', function() {
-            hideResetSection();
-        });
-    }
+    // Login and password reset removed (admin panel accessible directly)
 
     // Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function() {
-            sessionStorage.removeItem('adminLoggedIn');
-            loginError.textContent = '';
-            showLoginPanel();
-            document.getElementById('password').value = '';
+            // Clear any admin session flag and reload the admin page
+            try { sessionStorage.removeItem('adminLoggedIn'); } catch (e) {}
+            location.reload();
         });
     }
 
     function showAdminPanel() {
-        loginSection.style.display = 'none';
-        adminPanel.style.display = 'block';
+        if (adminPanel) adminPanel.style.display = 'block';
         setupAdminTabs();
         loadDashboard();
         loadPhotos();
@@ -232,10 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         populateSettings();
     }
 
-    function showLoginPanel() {
-        loginSection.style.display = 'flex';
-        adminPanel.style.display = 'none';
-    }
+    // showLoginPanel removed (login removed)
 
     // Tab Navigation
     function setupAdminTabs() {
